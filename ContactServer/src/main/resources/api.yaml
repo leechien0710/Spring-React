@@ -1,0 +1,118 @@
+openapi: 3.0.0
+info:
+  title: Blog API
+  version: 1.0.0
+  description: API for managing blog entities
+security:
+  - ApiKeyAuth: []
+paths:
+  /blogs:
+    post:
+      summary: Create a new blog
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Blog"
+      responses:
+        '201':
+          description: Blog created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Blog"
+        '404':
+          description: "Bad Request"
+        '401':
+          $ref: "#/components/responses/NoAuthorized"
+    get:
+      summary: Get a list of all blogs
+      responses:
+        '200':
+          description: List of blogs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Blog"
+        '401':
+          $ref: "#/components/responses/NoAuthorized"
+  /blogs/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Get a blog by ID
+      responses:
+        '200':
+          description: Blog retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Blog"
+        '401':
+          $ref: "#/components/responses/NoAuthorized"
+        '400':
+          description: "Not Found"
+    put:
+      summary: Update a blog by ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Blog"
+      responses:
+        '200':
+          description: Blog updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Blog"
+        '401':
+          $ref: "#/components/responses/NoAuthorized"
+        '400':
+          description: "Not Found"
+    delete:
+      summary: Delete a blog by ID
+      responses:
+        '204':
+          description: Blog deleted successfully
+        '401':
+          $ref: "#/components/responses/NoAuthorized"
+        '400':
+          description: "Not Found"
+components:
+  schemas:
+    Blog:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+          maxLength: 25
+        created_at:
+          type: string
+          format: date
+        category:
+          type: string
+        image:
+          type: string
+        description:
+          type: string
+          maxLength: 1000
+      required:
+        - title
+        - category
+  responses:
+    NoAuthorized:
+      description: 'No Authorized'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: api_key
